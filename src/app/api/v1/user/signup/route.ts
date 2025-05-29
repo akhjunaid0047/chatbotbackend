@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcrypt';
 import dbConnect from '@/lib/dbConnect';
 import userModel from '@/model/user.model';
-import { createToken } from '@/app/utils/tokenManager';
+import { createToken } from '@/utils/tokenManager';
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {

@@ -1,7 +1,7 @@
 import userModel from "@/model/user.model";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { verifyToken } from "@/app/utils/tokenManager";
+import { verifyToken } from "@/utils/tokenManager";
 import dbConnect from "@/lib/dbConnect";
 
 export async function GET() {

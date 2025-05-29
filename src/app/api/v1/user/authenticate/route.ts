@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import userModel from '@/model/user.model';
-import { verifyToken } from '@/app/utils/tokenManager';
+import { verifyToken } from '@/utils/tokenManager';
 
 export async function GET() {
   const token = (await cookies()).get('auth_token')?.value;

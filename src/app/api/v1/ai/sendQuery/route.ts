@@ -2,7 +2,7 @@ import OpenAI from "openai";
 import userModel from "@/model/user.model";
 import { NextResponse, NextRequest } from "next/server";
 import { cookies } from "next/headers";
-import { verifyToken } from "@/app/utils/tokenManager";
+import { verifyToken } from "@/utils/tokenManager";
 
 export async function POST(req: NextRequest) {
 

@@ -1,11 +1,13 @@
 import userModel from "@/model/user.model";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { verifyToken } from "@/app/utils/tokenManager";
+import { verifyToken } from "@/utils/tokenManager";
 import dbConnect from "@/lib/dbConnect";
 
 export async function GET() {
-  const token = (await cookies()).get("auth_token")?.value;
+  const cookie = await cookies();
+  const token = cookie.get("auth_token")?.value;
+  console.log("Token received:", token);
   if (!token)
     return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
 

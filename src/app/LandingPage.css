@@ -1,0 +1,160 @@
+:root {
+  --navbar-height: 64px;
+}
+
+/* Use JS-calculated height to avoid scroll */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(var(--vh, 1vh) * 100 - var(--navbar-height));
+  background-color: #18181b;
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Main content fills available height */
+.landing-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+/* Headline area */
+.landing-headlines {
+  max-width: 960px;
+  width: 100%;
+  text-align: left;
+}
+
+/* Responsive text sizes */
+.headline {
+  line-height: 1.1;
+  font-weight: bold;
+  margin: 0.25rem 0;
+}
+
+.line1 {
+  font-size: clamp(1.5rem, 5vw, 3.5rem);
+}
+.line2 {
+  font-size: clamp(1.4rem, 4.5vw, 3.2rem);
+}
+.line3 {
+  font-size: clamp(1.3rem, 4vw, 2.8rem);
+}
+.line4 {
+  font-size: clamp(1.2rem, 3.5vw, 2.5rem);
+}
+
+/* Divider line between body and footer */
+.divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  margin: 0;
+}
+
+/* Footer: always visible and on bottom */
+.landing-footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  font-size: 0.85rem;
+  background-color: #18181b;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.landing-footer span:first-child {
+  color: #ffffff;
+}
+
+.landing-footer span:last-child {
+  color: #aaaaaa; /* updated to light gray */
+}
+
+.desc-main,
+.desc-sub {
+  opacity: 0.8;
+}
+
+/* Blobs wrapper */
+/* .animated-blobs-wrapper {
+  position: fixed; /* changed from absolute 
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+} */
+
+/* Unified blob class */
+.animated-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(30px);
+  opacity: 0.3;
+  animation: blobFloat 1s ease-in-out infinite alternate;
+}
+
+.blob1 {
+  width: 160px;
+  height: 160px;
+  top: 20%;
+  left: 60%;
+  background: linear-gradient(135deg, #00fffc, #51538f);
+  animation-delay: 0s;
+}
+.blob2 {
+  width: 120px;
+  height: 120px;
+  top: 40%;
+  left: 65%;
+  background: linear-gradient(135deg, #ffffff, #51538f);
+  animation-delay: 50ms;
+}
+.blob3 {
+  width: 100px;
+  height: 100px;
+  top: 30%;
+  left: 70%;
+  background: linear-gradient(135deg, #00fffc, #ffffff);
+  animation-delay: 30ms;
+}
+
+@keyframes blobFloat {
+  0% {
+    transform: translateY(0px) translateX(30px)  scale(1);
+  }
+  100% {
+    transform: translateY(-30px) translateX(-20px)  scale(1.3);
+  }
+}
+
+/* Responsive blob size without removing them */
+@media (max-width: 768px) {
+  .animated-blobs-wrapper {
+    top: auto;
+    bottom: 10%;
+    right: 2%;
+    height: 150px;
+    width: 150px;
+  }
+
+  .blob1,
+  .blob2,
+  .blob3 {
+    width: 60px !important;
+    height: 60px !important;
+    filter: blur(20px);
+  }
+}
