@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     user.chats.push({ role: "assistant", content: response.output_text });
     await user.save();
     return NextResponse.json(outputText);
-  } catch (error: any) {
-    return NextResponse.json({ error: "Something went wrong!" }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
   }
 }
