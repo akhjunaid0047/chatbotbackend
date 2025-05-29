@@ -48,7 +48,7 @@ const Signup: React.FC = () => {
       await auth?.signup(values.name, values.email, values.password);
       toast.success("Signed Up Successfully", { id: "signup" });
       router.push("/chat");
-    } catch (error) {
+    } catch  {
       toast.error("Signing Up Failed", { id: "signup" });
     }
   };
