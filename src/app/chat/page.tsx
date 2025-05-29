@@ -17,7 +17,7 @@ type Message = {
 
 const Chat = () => {
   const [language, setLanguage] = useState('ENGLISH');
-  const handleLanguageChange = (e: { target: { checked: any; }; }) => {
+  const handleLanguageChange = (e: { target: { checked: boolean; }; }) => {
     const newLanguage = e.target.checked ? 'HINDI' : 'ENGLISH';
     setLanguage(newLanguage);
   };
@@ -46,7 +46,7 @@ const Chat = () => {
       await deleteChats();
       setChatMessages([]);
       toast.success("Deleted Chats Successfully", { id: "deletechats" });
-    } catch (error) {
+    } catch {
       toast.error("Deleting chats failed", { id: "deletechats" });
     }
   };
@@ -142,7 +142,7 @@ const Chat = () => {
           }}
         >
           {chatMessages.map((chat, index) => (
-            // @ts-ignore
+            // @ts-expect-error
             <ChatItem content={chat.content} role={chat.role} key={index} />
           ))}
         </Box>
