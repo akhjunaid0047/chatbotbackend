@@ -1,3 +1,4 @@
+"use server";
 import OpenAI from "openai";
 import userModel from "@/model/user.model";
 import { NextResponse, NextRequest } from "next/server";

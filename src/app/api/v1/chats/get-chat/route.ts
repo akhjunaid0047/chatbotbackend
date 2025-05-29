@@ -1,3 +1,5 @@
+"use server";
+
 import userModel from "@/model/user.model";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";

@@ -1,3 +1,4 @@
+"use server";
 import { NextRequest, NextResponse } from 'next/server';
 import { compare } from 'bcrypt';
 import dbConnect from '@/lib/dbConnect';
