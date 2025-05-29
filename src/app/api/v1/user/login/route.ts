@@ -4,7 +4,6 @@ import { compare } from 'bcrypt';
 import dbConnect from '@/lib/dbConnect';
 import userModel from '@/model/user.model';
 import { createToken } from '@/utils/tokenManager';
-export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
