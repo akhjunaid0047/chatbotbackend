@@ -1,6 +1,6 @@
 "use server";
 
-const BASE_URL = "http://localhost:3000/api/v1";
+const BASE_URL = "https://chatbotbackend-two.vercel.app/api/v1";
 
 export const loginUser = async (email: string, password: string) => {
   const response = await fetch(`${BASE_URL}/user/login`, {
