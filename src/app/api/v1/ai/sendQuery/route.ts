@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   try {
     if (!session) {
-      console.log("No session found");
       return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
     }
 

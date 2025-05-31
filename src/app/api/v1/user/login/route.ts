@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { compare } from 'bcrypt';
 import dbConnect from '@/lib/dbConnect';
 import userModel from '@/model/user.model';
-import { createToken } from '@/utils/tokenManager';
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();

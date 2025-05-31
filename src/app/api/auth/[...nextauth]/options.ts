@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import userModel from "@/model/user.model";
@@ -18,9 +19,7 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials): Promise<any> {
         await dbConnect();
-        console.log(credentials);
         const user = await userModel.findOne({ email: credentials?.email });
-        // console.log(user);
         if (!user) {
           throw new Error("No user found with this email");
         }
@@ -31,7 +30,6 @@ export const authOptions: AuthOptions = {
             user.password as string
           );
         if (isValid) {
-            // console.log(user);
           return user;
         } else {
           throw new Error("Invalid credentials");

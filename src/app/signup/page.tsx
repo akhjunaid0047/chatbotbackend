@@ -86,7 +86,6 @@ const Signup = () => {
       });
 
       const data = await response.json();
-      console.log("Response data:", data);
       if (response.status !== 201) {
         setError(data.error || "Something went wrong. Please try again.");
       } else {

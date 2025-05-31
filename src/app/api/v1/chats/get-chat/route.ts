@@ -4,14 +4,11 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next";
-import { log } from "console";
 
-
-export async function GET(req: Request) {
+export async function GET() {
   try {
     await dbConnect();
     const session = await getServerSession(authOptions);
-    log(session);
     if (!session)
       return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
 

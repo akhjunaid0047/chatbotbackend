@@ -47,7 +47,6 @@ export const sendChatRequest = async (message: string, language:string) => {
     throw new Error("unable to chat");
   }
   const data = await res.data.outputText;
-  console.log(data);
   return data;
 };
 
