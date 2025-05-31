@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation";
 import { red } from "@mui/material/colors";
 import { useSession } from "next-auth/react";
 
-
 type Message = {
   role: string;
   content: string;
@@ -22,8 +21,7 @@ type Message = {
 
 const Chat = () => {
   const [language, setLanguage] = useState("ENGLISH");
-  const [auth, setAuth] = useState(false);
-  const {status} = useSession();
+  const { status } = useSession();
   const handleLanguageChange = (e: { target: { checked: boolean } }) => {
     const newLanguage = e.target.checked ? "HINDI" : "ENGLISH";
     setLanguage(newLanguage);
@@ -72,7 +70,7 @@ const Chat = () => {
           toast.error("Loading Failed", { id: "loadchats" });
         });
     }
-  }, [auth]);
+  });
 
   useEffect(() => {
     if (status === "unauthenticated") {
