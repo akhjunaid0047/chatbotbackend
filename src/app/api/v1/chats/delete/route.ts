@@ -1,20 +1,17 @@
-"use server";
 import userModel from "@/model/user.model";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { verifyToken } from "@/utils/tokenManager";
 import dbConnect from "@/lib/dbConnect";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import { getServerSession } from "next-auth";
 
 export async function GET() {
-  const token = (await cookies()).get("auth_token")?.value;
-  if (!token)
+  const session = await getServerSession(authOptions);
+  if (!session)
     return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
 
-  let payload;
   try {
-    payload = verifyToken(token);
     await dbConnect();
-    const user = await userModel.findById(payload.id);
+    const user = await userModel.findById(session.user._id);
     if (!user)
       return NextResponse.json(
         { message: "User not registered" },

@@ -17,18 +17,6 @@ export async function POST(req: NextRequest) {
   if (!ok)
     return NextResponse.json({ message: 'Incorrect password' }, { status: 403 });
 
-  const token = createToken(user._id.toString(), user.email);
-  const res = NextResponse.json({ message: 'User logged in' }, { status: 200 });
+  return NextResponse.json({ message: 'User logged in' }, { status: 200 });
 
-  res.cookies.set({
-    name: 'auth_token',
-    value: token,
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7,
-  });
-
-  return res;
 }

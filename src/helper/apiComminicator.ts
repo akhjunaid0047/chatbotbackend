@@ -1,92 +1,68 @@
-"use server";
+import axios from "axios";
 
-const BASE_URL = "https://chatbotbackend-two.vercel.app/api/v1";
+const BASEURL = "https://chatbotbackend-two.vercel.app/api/v1";
 
 export const loginUser = async (email: string, password: string) => {
-  const response = await fetch(`${BASE_URL}/user/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },    
-    body: JSON.stringify({ email, password }),
-    credentials: "include", // if you rely on cookies
-  });
-  if (response.status !== 200) {
-    throw new Error("Unable to Login"); 
-  }
-  return await response.json();
-};
+  const response = await axios.post(`${BASEURL}/user/login`, { email, password });
+  if (response.status !== 200)
+    throw new Error("Unable to Login");
+  const data = await response.data;
+  return data;
+}
 
 export const checkAuthStatus = async () => {
-  const response = await fetch(`${BASE_URL}/user/authenticate`, {
-    method: "GET",
-    credentials: "include",
-  });
-  if (response.status !== 200) {
+  const response = await axios.get(`${BASEURL}/user/authenticate`);
+  if (response.status !== 200)
     throw new Error("Authentication Failed");
-  }
-  return await response.json();
-};
+  const data = await response.data;
+  return data;
+}
 
 export const logoutUser = async () => {
-  const response = await fetch(`${BASE_URL}/user/logout`, {
-    method: "GET",
-    credentials: "include",
-  });
-  if (response.status !== 200) {
+  const res = await axios.get(`${BASEURL}/user/logout`);
+  if (res.status !== 200) {
     throw new Error("Unable to logout");
   }
-  return await response.json();
+  const data = await res.data;
+  return data;
 };
 
-export const signupUser = async (name: string, email: string, password: string) => {
-  const response = await fetch(`${BASE_URL}/user/signup`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name, email, password }),
-    credentials: "include",
-  });
-  if (response.status !== 201) {
+export const signupUser = async (
+  name: string,
+  email: string,
+  password: string
+) => {
+  const res = await axios.post(`${BASEURL}/user/signup`, { name, email, password });
+  if (res.status !== 201) {
     throw new Error("Unable to Signup");
   }
-  return await response.json();
+  const data = await res.data;
+  return data;
 };
 
-export const sendChatRequest = async (message: string, language: string) => {
-  const response = await fetch(`${BASE_URL}/ai/sendQuery`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ question: message, language }),
-    credentials: "include",
-  });
-  console.log(response);
-  if (response.status !== 200) {
-    throw new Error("Unable to chat");
+export const sendChatRequest = async (message: string, language:string) => {
+  const req = { "question": message, "language": language };
+  const res = await axios.post(`${BASEURL}/ai/sendQuery`, req);
+  if (res.status !== 200) {
+    throw new Error("unable to chat");
   }
-  return await response.json();
+  const data = await res.data.outputText;
+  console.log(data);
+  return data;
 };
 
 export const deleteChats = async () => {
-  const response = await fetch(`${BASE_URL}/chats/delete`, {
-    method: "GET",
-    credentials: "include",
-  });
-  if (response.status !== 200) {
+  const res = await axios.get(`${BASEURL}/chats/delete`);
+  if (res.status !== 200) {
     throw new Error("Unable to delete chats");
   }
 };
 
 export const getChats = async () => {
-  const response = await fetch(`${BASE_URL}/chats/get-chat`, {
-    method: "GET",
-    credentials: "include",
-  });
-  // if (response.status !== 200) {
-  //   throw new Error("Unable to send chat");
-  // }
-  return await response.json();
+  const res = await axios.get(`${BASEURL}/chats/get-chat`);
+  if (res.status !== 200) {
+    throw new Error("Unable to send chat");
+  }
+  const data = await res.data;
+  return data;
 };

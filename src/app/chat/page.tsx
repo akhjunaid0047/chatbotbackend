@@ -2,7 +2,6 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Box, Avatar, Typography, Button, IconButton } from "@mui/material";
-import { useAuth } from "@/context/AuthContext";
 import ChatItem from "@/components/chat/ChatItem";
 import { IoMdSend } from "react-icons/io";
 import {
@@ -13,6 +12,8 @@ import {
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { red } from "@mui/material/colors";
+import { useSession } from "next-auth/react";
+
 
 type Message = {
   role: string;
@@ -21,6 +22,8 @@ type Message = {
 
 const Chat = () => {
   const [language, setLanguage] = useState("ENGLISH");
+  const [auth, setAuth] = useState(false);
+  const {status} = useSession();
   const handleLanguageChange = (e: { target: { checked: boolean } }) => {
     const newLanguage = e.target.checked ? "HINDI" : "ENGLISH";
     setLanguage(newLanguage);
@@ -29,7 +32,6 @@ const Chat = () => {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  const auth = useAuth();
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
 
   const handleSubmit = async () => {
@@ -59,7 +61,7 @@ const Chat = () => {
   };
 
   useLayoutEffect(() => {
-    if (auth?.isLoggedIn && auth.user) {
+    if (status === "authenticated" || status === "loading") {
       toast.loading("Loading Chats", { id: "loadchats" });
       getChats()
         .then((data) => {
@@ -73,10 +75,10 @@ const Chat = () => {
   }, [auth]);
 
   useEffect(() => {
-    if (!auth?.user) {
+    if (status === "unauthenticated") {
       router.push("/login");
     }
-  }, [auth?.user, router]);
+  }, [status, router]);
 
   useEffect(() => {
     if (chatContainerRef.current) {

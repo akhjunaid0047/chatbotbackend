@@ -1,29 +1,26 @@
-"use server";
 import OpenAI from "openai";
 import userModel from "@/model/user.model";
 import { NextResponse, NextRequest } from "next/server";
-import { cookies } from "next/headers";
-import { verifyToken } from "@/utils/tokenManager";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import { getServerSession } from "next-auth/next";
+import dbConnect from "@/lib/dbConnect";
 
 export async function POST(req: NextRequest) {
+  
+  await dbConnect();
 
   const client = new OpenAI({
     apiKey: process.env.OPENAI_API,
   });
 
+  const session = await getServerSession(authOptions);
   try {
-    const token = (await cookies()).get("auth_token")?.value;
-    if (!token)
+    if (!session) {
+      console.log("No session found");
       return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
-
-    let payload;
-    try {
-      payload = verifyToken(token);
-    } catch {
-      return NextResponse.json({ message: "Invalid token" }, { status: 401 });
     }
 
-    const user = await userModel.findById(payload.id);
+    const user = await userModel.findById(session.user._id);
     if (!user)
       return NextResponse.json({
         message: "User not registered OR Token malfunctioned",
@@ -47,7 +44,7 @@ export async function POST(req: NextRequest) {
     const outputText = response.output_text;
     user.chats.push({ role: "assistant", content: response.output_text });
     await user.save();
-    return NextResponse.json(outputText);
+    return NextResponse.json({ outputText : outputText }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }

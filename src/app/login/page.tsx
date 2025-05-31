@@ -1,270 +1,146 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
-import { useAuth } from "@/context/AuthContext";
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-
-import email_icon from "../assets/email.png";
-import password_icon from "../assets/password.png";
-import eye_open from "../assets/watch.png";
-import eye_close from "../assets/closed-eyes.png";
+import { useSession } from "next-auth/react";
 
 const Login = () => {
   const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
-  const [values, setValues] = useState({ email: "", password: "" });
-  const [visible, setVisible] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-    {}
-  );
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string>("");
+  const { status } = useSession();
+  const [redirecting, setRedirecting] = useState(false);
 
-  const auth = useAuth();
+  useEffect(() => {
+    if (status === "authenticated") {
+      setRedirecting(true);
+      setTimeout(() => {
+        router.push("/chat");
+      }, 100);
+    }
+  }, [status, router]);
 
-  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
-    });
+  if (redirecting)
+    return (
+      <div className="flex items-center justify-center w-full py-10">
+        <span className="w-10 h-10 border-4 border-t-[#00fffc] border-gray-300 rounded-full animate-spin"></span>
+        <span className="ml-3 text-lg font-semibold text-white-700">
+          Redirecting…
+        </span>
+      </div>
+    );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "email") setEmail(value);
+    if (name === "password") setPassword(value);
   };
 
-  const validate = () => {
-    const newErrors: { email?: string; password?: string } = {};
-    if (!values.email) newErrors.email = "Email is required";
-    if (!values.password) newErrors.password = "Password is required";
-    return newErrors;
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const newErrors = validate();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setError("");
+
+    if (!email || !password) {
+      setError("Please fill in both email and password.");
       return;
     }
 
-    try {
-      toast.loading("Signing In", { id: "login" });
-      await auth?.login(values.email, values.password);
-      toast.success("Signed In Successfully", { id: "login" });
-    } catch {
-      toast.error("Failed to Sign In", { id: "login" });
+    // Call NextAuth signIn function
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (result?.error) {
+      setError("Invalid email or password. Please try again.");
+    } else {
+      router.push("/chat");
     }
   };
 
-  useEffect(() => {
-    if (auth?.user) {
-      router.push("/chat");
-    }
-  }, [auth?.user, router]);
-
-  useEffect(() => {
-    // Prevent scrolling
-    document.body.style.overflow = "hidden";
-    document.body.style.margin = "0";
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.margin = "";
-    };
-  }, []);
-
-  useEffect(() => {
-    const checkWidth = () => setIsMobile(window.innerWidth < 500);
-    checkWidth(); // check on mount
-
-    window.addEventListener("resize", checkWidth);
-    return () => window.removeEventListener("resize", checkWidth);
-  }, []);
-
-  // --- Styles ---
-  // (Keep your existing inline styles here...)
-
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        backgroundColor: "#000000",
-        padding: "20px",
-        boxSizing: "border-box",
-      }}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          width: "100%",
-          maxWidth: "500px",
-          background: "#121212",
-          padding: isMobile ? "24px" : "40px",
-          borderRadius: "20px",
-          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.9)",
-        }}
-        autoComplete="off"
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
-          <h2
-            style={{
-              color: "#FFFFFF",
-              fontSize: "2.2rem",
-              fontWeight: "700",
-              fontFamily: "Roboto, sans-serif",
-            }}
-          >
-            Login
-          </h2>
-          <div
-            style={{
-              width: "100%",
-              height: "1px",
-              backgroundColor: "#FFFFFF",
-              margin: "10px 0",
-            }}
-          />
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-black px-4 sm:px-8">
+      <div className="max-w-lg w-full p-8 bg-white dark:bg-neutral-950 rounded-lg shadow-lg dark:shadow-lg">
+        <h2 className="text-3xl font-semibold text-center text-black dark:text-white mb-6">
+          Welcome Back to AssemblyBOT
+        </h2>
+        <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
+          Please log in with your credentials
+        </p>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          {/* Email Field */}
           <div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "10px",
-                borderRadius: "6px",
-                backgroundColor: "#1C1C1C",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
-              }}
-            >
-              <Image src={email_icon} alt="Email Icon" width={24} height={24} />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email Id"
-                value={values.email}
-                onChange={handleInput}
-                style={{
-                  flex: 1,
-                  height: "2.6rem",
-                  background: "transparent",
-                  outline: "none",
-                  color: "#E0E0E0",
-                  fontSize: "1rem",
-                  border: "none",
-                  padding: "0 10px",
-                }}
-              />
-            </div>
-            {errors.email && (
-              <div
-                style={{
-                  color: "#CF6679",
-                  fontSize: "12px",
-                  marginTop: "4px",
-                  paddingLeft: "8px",
-                }}
-              >
-                {errors.email}
-              </div>
-            )}
+            <Label className="block text-black dark:text-white mb-2">
+              Email Address
+            </Label>
+            <Input
+              id="email"
+              placeholder="Enter your email"
+              type="email"
+              name="email"
+              value={email}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+            />
           </div>
 
+          {/* Password Field */}
           <div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "10px",
-                borderRadius: "6px",
-                backgroundColor: "#1C1C1C",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
-              }}
-            >
-              <Image
-                src={password_icon}
-                alt="Password Icon"
-                width={24}
-                height={24}
-              />
-              <input
-                type={visible ? "text" : "password"}
+            <Label className="block text-black dark:text-white mb-2">
+              Password
+            </Label>
+            <div className="relative">
+              <Input
+                id="password"
+                placeholder="Enter your password"
+                type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="Password"
-                value={values.password}
-                onChange={handleInput}
-                style={{
-                  flex: 1,
-                  height: "2.6rem",
-                  background: "transparent",
-                  outline: "none",
-                  color: "#E0E0E0",
-                  fontSize: "1rem",
-                  border: "none",
-                  padding: "0 10px",
-                }}
+                value={password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
               />
-              <div
-                onClick={() => setVisible(!visible)}
-                style={{ cursor: "pointer", marginLeft: "8px" }}
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-black dark:text-white"
               >
-                <Image
-                  src={visible ? eye_open : eye_close}
-                  alt="Toggle Visibility"
-                  width={24}
-                  height={24}
-                />
-              </div>
+                {showPassword ? <HiEyeOff size={24} /> : <HiEye size={24} />}
+              </button>
             </div>
-            {errors.password && (
-              <div
-                style={{
-                  color: "#CF6679",
-                  fontSize: "12px",
-                  marginTop: "4px",
-                  paddingLeft: "8px",
-                }}
-              >
-                {errors.password}
-              </div>
-            )}
           </div>
-        </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "30px",
-          }}
-        >
+          {/* Submit Button */}
           <button
             type="submit"
-            style={{
-              cursor: "pointer",
-              padding: "12px 24px",
-              background: "#333333",
-              color: "#FFFFFF",
-              borderRadius: "50px",
-              fontSize: "1.1rem",
-              width: isMobile ? "80%" : "60%",
-              border: "none",
-              transition: "background-color 0.3s ease",
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.background = "#444444")}
-            onMouseOut={(e) => (e.currentTarget.style.background = "#333333")}
+            className="w-full py-2 mt-4 bg-black text-white font-semibold rounded-md hover:bg-gray-700 dark:bg-white dark:text-black dark:hover:bg-gray-300"
           >
-            Login
+            Log In &rarr;
           </button>
-        </div>
-      </form>
+
+          {/* Error Message */}
+          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+
+          {/* Link to Register Page */}
+          <p className="text-center text-sm text-gray-600 dark:text-gray-300 mt-4">
+            Don't have an account?{" "}
+            <Link href="/signup" className="text-blue-600 dark:text-blue-400">
+              Sign up
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };
